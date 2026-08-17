@@ -1,0 +1,11 @@
+{
+  "name": "pc-diagnostic-atlas",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Six-layer computer troubleshooting knowledge base and repair-session tracker",
+  "scripts": {
+    "start": "node server.js",
+    "reset": "node tools/reset-db.js"
+  },
+  "engines": {"node": ">=18"}
+}

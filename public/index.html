@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PC Diagnostic Atlas</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <button class="brand" data-route="#/">PC<span>Diagnostic</span><b>Atlas</b></button>
+    <div class="search-wrap">
+      <span>⌕</span><input id="globalSearch" placeholder="Search symptom, code, component, hypothesis, test…" autocomplete="off" />
+      <kbd>/</kbd>
+      <div id="searchPopover" class="search-popover hidden"></div>
+    </div>
+    <nav>
+      <button data-route="#/sessions">Repair Sessions</button>
+      <button data-route="#/admin">Admin</button>
+    </nav>
+  </header>
+  <div class="app-shell">
+    <aside id="sidebar"></aside>
+    <main id="main"><div class="loading">Loading diagnostic database…</div></main>
+  </div>
+  <div id="toast" class="toast"></div>
+  <script src="/app.js"></script>
+</body>
+</html>
