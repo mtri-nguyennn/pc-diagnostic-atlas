@@ -5,7 +5,11 @@
   "description": "Six-layer computer troubleshooting knowledge base and repair-session tracker",
   "scripts": {
     "start": "node server.js",
-    "reset": "node tools/reset-db.js"
+    "reset": "node tools/reset-db.js",
+    "db:seed": "node tools/seed-postgres.js"
   },
-  "engines": {"node": ">=18"}
+  "engines": {"node": ">=18"},
+  "dependencies": {
+    "pg": "^8.16.3"
+  }
 }

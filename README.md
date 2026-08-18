@@ -1,6 +1,6 @@
 # PC Diagnostic Atlas
 
-A dependency-free Node.js prototype for a six-layer computer troubleshooting knowledge base.
+A Node.js troubleshooting knowledge base with a Vercel serverless API and Supabase Postgres persistence.
 
 ## Included features
 
@@ -16,7 +16,7 @@ The initial database is extracted from the six supplied `Layer_1.docx` … `Laye
 
 ## Run
 
-Requirements: Node.js 18 or newer. No npm packages are required.
+Requirements: Node.js 18 or newer, a Supabase Postgres database, and a `DATABASE_URL` environment variable.
 
 ```bash
 cd pc-diagnostic-atlas
@@ -35,13 +35,45 @@ Use another port if needed:
 PORT=8080 npm start
 ```
 
+For local development, copy `.env.example` to `.env`, fill in the Supabase transaction-pooler URI, then load it before running `npm start`:
+
+```bash
+set -a
+source .env
+set +a
+npm start
+```
+
 ## Database
 
-- `data/seed_db.json` — immutable source-derived seed for this prototype
-- `data/db.json` — runtime JSON database; Admin edits and repair sessions are persisted here
-- `npm run reset` — reset `db.json` back to the source seed
+- `data/seed_db.json` — immutable source-derived baseline knowledge
+- `data/db.json` — local migration input, including the current repair-session history
+- `supabase/schema.sql` — Postgres schema
+- `npm run db:seed` — creates the schema and imports `data/db.json` into Postgres
 
-For a production deployment, replace the JSON store with PostgreSQL/SQLite, add authentication/roles to Admin, validate and moderate user submissions, add audit/version history, and use atomic backups.
+The running application reads and writes Postgres; it never mutates either JSON file. `npm run reset` only resets the local JSON migration input.
+
+## Deploy to Vercel + Supabase
+
+1. Create a Supabase project and open its SQL Editor.
+2. Run the contents of `supabase/schema.sql` (optional if you run the seed command next).
+3. From the Supabase **Connect** dialog, copy the **Transaction pooler** connection URI. This pooler mode is appropriate for Vercel serverless functions.
+4. Set `DATABASE_URL` locally and run:
+
+   ```bash
+   npm install
+   npm run db:seed
+   ```
+
+   The command imports `data/db.json`, so it preserves the existing local repair sessions. To import only the pristine source dataset instead, run `npm run db:seed data/seed_db.json`.
+5. Import this Git repository into Vercel. Vercel serves `public/` and deploys the handlers in `api/` automatically.
+6. In **Vercel → Project → Settings → Environment Variables**, add `DATABASE_URL` for Production, Preview, and Development, then deploy.
+
+No API URL configuration is necessary: the frontend continues to call the same-origin `/api/...` endpoints.
+
+### Security before a public launch
+
+The existing Admin experience intentionally has no authentication. Do not publicly expose it yet: anyone who can reach the site can call the write endpoints. Add authentication and authorization around `POST /api/flows`, `PUT /api/flows/:id`, and the session write endpoints before enabling public access.
 
 ## Source extraction tool
 
